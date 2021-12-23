@@ -9,7 +9,7 @@ import UIKit
 import AVFoundation
 
 final class ViewController: UIViewController {
-    
+
     lazy var totalSecondsOfWork = 0
     lazy var totalSecondsOfRelaxation = 0
     var counter: Int = 0 {
@@ -20,15 +20,15 @@ final class ViewController: UIViewController {
     weak var timer: Timer?
     lazy var utterenceArr52: [AVSpeechUtterance] = [
         AVSpeechUtterance(string: "52 минуты усиленной работы, время пошло!"),
-        AVSpeechUtterance(string: "Хозяин, пора поработать"),
-        AVSpeechUtterance(string: "Наша цель - стать сеньор девелопером - 52 минуты интесивной работы время пошло!"),
-        AVSpeechUtterance(string: "Продуктивность это важно.Время работать - вперед мой повелитель!")
+        AVSpeechUtterance(string: "Ярослав, пора поработать, вперед за знаниями. Это самая ценная инвестиция твоего времени."),
+        AVSpeechUtterance(string: "Наша цель - стать сеньор девелопером и великим разработчиком. 52 минуты интесивной работы время пошло!"),
+        AVSpeechUtterance(string: "Продуктивность это важно.Время работать - вперед! Пришло время покорить новые вершины!")
     ]
     lazy var utterenceArr17: [AVSpeechUtterance] = [
-        AVSpeechUtterance(string: "Поработали, теперь можно и перерыв сделать - 17 минут, время пошло!"),
+        AVSpeechUtterance(string: "Поработал, теперь можно и перерыв сделать - 17 минут, время пошло! Необходимо дать отдохнуть глазам."),
         AVSpeechUtterance(string: "Настало время отдохнуть, 17 минут пошли!"),
         AVSpeechUtterance(string: "Какой ты молодец, можешь теперь отдохнуть мой повелитель"),
-        AVSpeechUtterance(string: "Хозяин, пора сделать перерыв")
+        AVSpeechUtterance(string: "Ярослав, супер, пора сделать перерыв")
     ]
     lazy var synthesizer = AVSpeechSynthesizer()
     
@@ -115,7 +115,9 @@ final class ViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         counter = 0
-        synthesizer.speak(utterenceArr52.randomElement()!)
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            self?.synthesizer.speak((self?.utterenceArr52.randomElement()!)!)
+        }
     }
     
     override func viewDidLayoutSubviews() {
