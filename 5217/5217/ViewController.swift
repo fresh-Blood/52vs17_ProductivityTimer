@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  5217
-//
-//  Created by Admin on 13.12.2021.
-//
-
 import UIKit
 import AVFoundation
 
