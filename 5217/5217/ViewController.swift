@@ -5,18 +5,21 @@ final class ViewController: UIViewController {
 
     lazy var totalSecondsOfWork = 0
     lazy var totalSecondsOfRelaxation = 0
-    var counter: Int = 0 {
+    private var counter: Int = 0 {
         didSet {
             counter == 0 ? startWorking() : startRelaxing()
         }
     }
     weak var timer: Timer?
+    
+    // MARK: массив сообщений для работы
     lazy var utterenceArr52: [AVSpeechUtterance] = [
         AVSpeechUtterance(string: "52 минуты усиленной работы, время пошло!"),
         AVSpeechUtterance(string: "Ярослав, пора поработать, вперед за знаниями. Это самая ценная инвестиция твоего времени."),
         AVSpeechUtterance(string: "Наша цель - стать сеньор девелопером и великим разработчиком. 52 минуты интесивной работы время пошло!"),
         AVSpeechUtterance(string: "Продуктивность это важно.Время работать - вперед! Пришло время покорить новые вершины!")
     ]
+    // MARK: массив сообщений для отдыха
     lazy var utterenceArr17: [AVSpeechUtterance] = [
         AVSpeechUtterance(string: "Поработал, теперь можно и перерыв сделать - 17 минут, время пошло! Необходимо дать отдохнуть глазам."),
         AVSpeechUtterance(string: "Настало время отдохнуть, 17 минут пошли!"),
@@ -173,7 +176,7 @@ extension UILabel {
         layer.add(pulse, forKey: nil)
     }
 }
-
+// MARK: переводим секунды в нужный вид часы : минуты : секунды 
 extension String {
     func presentInHoursAndMinutes() -> String {
         var hours = 0
