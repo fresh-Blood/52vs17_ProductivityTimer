@@ -5,7 +5,8 @@ final class ViewController: UIViewController {
 
     lazy var totalSecondsOfWork = 0
     lazy var totalSecondsOfRelaxation = 0
-    private var counter: Int = 0 {
+    private var counter: Int = 0
+    {
         didSet {
             counter == 0 ? startWorking() : startRelaxing()
         }
@@ -90,8 +91,73 @@ final class ViewController: UIViewController {
         return stackView
     }()
     
+    private let startButton: UIButton = {
+       let btn = UIButton()
+        btn.setTitle("Start",
+                     for: .normal)
+        btn.setTitleColor(.black,
+                          for: .normal)
+        btn.backgroundColor = .systemOrange
+        btn.titleLabel?.font = .systemFont(ofSize: 20, weight: .medium)
+        return btn
+    }()
+    
+    private func setTapPoliticsForStartButton() {
+        let gesture = UILongPressGestureRecognizer(target: self,
+                                                   action: #selector(tapStart))
+        gesture.minimumPressDuration = 0
+        startButton.addGestureRecognizer(gesture)
+    }
+    @objc private func tapStart(gesture: UILongPressGestureRecognizer) {
+        if gesture.state == .began {
+            startButton.layer.borderWidth = 1.0
+            startButton.backgroundColor = .systemYellow
+            counter = 0
+            DispatchQueue.global(qos: .utility).async { [weak self] in
+                self?.synthesizer.speak((self?.utterenceArr52.randomElement()!)!)
+            }
+        } else {
+            startButton.layer.borderWidth = 5.0
+            startButton.backgroundColor = .systemOrange
+        }
+    }
+    
+    private let stopButton: UIButton = {
+       let btn = UIButton()
+        btn.setTitle("Stop",
+                     for: .normal)
+        btn.setTitleColor(.black,
+                          for: .normal)
+        btn.backgroundColor = .systemOrange
+        btn.titleLabel?.font = .systemFont(ofSize: 20, weight: .medium)
+        return btn
+    }()
+    
+    private func setTapPoliticsForStopButton() {
+        let gesture = UILongPressGestureRecognizer(target: self,
+                                                   action: #selector(tapStop))
+        gesture.minimumPressDuration = 0
+        stopButton.addGestureRecognizer(gesture)
+    }
+    @objc private func tapStop(gesture: UILongPressGestureRecognizer) {
+        if gesture.state == .began {
+            stopButton.layer.borderWidth = 1.0
+            stopButton.backgroundColor = .systemYellow
+            timer?.invalidate()
+            workStatusLabel.text = "0"
+            relaxationStatusLabel.text = "0"
+            totalSecondsOfWork = 0
+            totalSecondsOfRelaxation = 0
+        } else {
+            stopButton.layer.borderWidth = 5.0
+            stopButton.backgroundColor = .systemOrange
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        setTapPoliticsForStartButton()
+        setTapPoliticsForStopButton()
         view.backgroundColor = .black
         stackViewWork.addArrangedSubview(workNameLabel)
         stackViewWork.addArrangedSubview(workStatusLabel)
@@ -99,6 +165,8 @@ final class ViewController: UIViewController {
         stackViewRelaxation.addArrangedSubview(relaxationStatusLabel)
         view.addSubview(stackViewWork)
         view.addSubview(stackViewRelaxation)
+        view.addSubview(startButton)
+        view.addSubview(stopButton)
         
         _ = utterenceArr52.map{
             $0.voice = AVSpeechSynthesisVoice(language: "ru-RU")
@@ -108,21 +176,31 @@ final class ViewController: UIViewController {
         }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        counter = 0
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            self?.synthesizer.speak((self?.utterenceArr52.randomElement()!)!)
-        }
-    }
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         let inset: CGFloat = 20
-        stackViewWork.frame = CGRect(x: view.bounds.minX + inset*2, y: view.bounds.height/4, width: view.bounds.width - inset*4, height: view.bounds.height/5)
+        stackViewWork.frame = CGRect(x: view.bounds.minX + inset*2,
+                                     y: view.bounds.height/6,
+                                     width: view.bounds.width - inset*4,
+                                     height: view.bounds.height/6)
         stackViewWork.layer.cornerRadius = stackViewWork.bounds.height/2
-        stackViewRelaxation.frame = CGRect(x: view.bounds.minX + inset*2, y: view.bounds.height/2, width: view.bounds.width - inset*4, height: view.bounds.height/5)
+        stackViewRelaxation.frame = CGRect(x: view.bounds.minX + inset*2,
+                                           y: view.bounds.height/3 + inset,
+                                           width: view.bounds.width - inset*4,
+                                           height: view.bounds.height/6)
         stackViewRelaxation.layer.cornerRadius = stackViewWork.bounds.height/2
+        startButton.frame = CGRect(x: view.bounds.width/4 + view.safeAreaInsets.left - inset,
+                                   y: view.bounds.height/6*4 - inset*2,
+                                   width: view.bounds.width/4,
+                                   height: view.bounds.width/4)
+        startButton.layer.cornerRadius = startButton.bounds.height/2
+        startButton.layer.borderWidth = 5.0
+        stopButton.frame = CGRect(x: view.bounds.width/2 + inset - view.safeAreaInsets.left,
+                                   y: view.bounds.height/6*4 - inset*2,
+                                   width: view.bounds.width/4,
+                                  height: view.bounds.width/4)
+        stopButton.layer.cornerRadius = stopButton.bounds.height/2
+        stopButton.layer.borderWidth = 5.0
     }
     
     private func startWorking() {
